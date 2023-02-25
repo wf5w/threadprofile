@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# written by: Jerry Davis,  ham callsign: WF5W
+# date: 24-FEB-2023
+# version: 1.0
+
+# this script is meant to be a companion to Mark Ganson's Thread Profile workbench for FreeCad
+# NOTE: this script requires the bc calculator program
+
+# I wanted to be able to do US Acme threads (painters poles), with the Thread Profile
+# But the presets didn't have that. But Mark said that by adjusting the pitch and Minor Diameter
+# any screw thread could be done.
+
+# I found some documentation on Acme threads, and built my own script to make it easier
+#
+# usage: threadprofile 5/8 8     <-- meaning 5/8 inch by 8 threads per inch
+
+if [ -z $1 ]; then
+  echo "usage: threadprofile diam tpi  # example threadprofile 5/8 8"
+  exit 0
+fi
+
+od=$(echo "scale=4; ${1}" | bc -l)      # get outer diameter
+tpi=$(echo "scale=4; ${2}" | bc -l)     # get tpi into 4 digit precision
+
+minord=$(echo "scale=4; ( ${od} + 1/(${tpi}*2) ) * 25.4" | bc -l)    # Minor Diameter in mm
+pitch=$(echo "scale=4; 1/${tpi}*25.4" | bc -l)                       # Pitch in mm
+
+echo with:
+echo "  od  = $od"
+echo "  tpi = $tpi"
+echo
+echo minor diameter: ${minord}
+echo pitch: ${pitch}
+
